@@ -11,6 +11,7 @@ public class BooleanSearchEngine implements SearchEngine {
     private String pdfName;
     private final Map<String, List<PageEntry>> pageEntryMap = new HashMap<>();
 
+
     public BooleanSearchEngine(File pdfsDir) throws IOException {
         // прочтите тут все pdf и сохраните нужные данные,
         // тк во время поиска сервер не должен уже читать файлы
@@ -19,9 +20,10 @@ public class BooleanSearchEngine implements SearchEngine {
             PdfDocument pdfDocument = new PdfDocument(new PdfReader(file));
             int pages = pdfDocument.getNumberOfPages();
             for (int i = 1; i <= pages; i++) {
+
                 String text = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(i));
-                String[] word = text.split("\\P{IsAlphabetic}+");
-                List<String> sort = Arrays.stream(word)
+                String[] words = text.split("\\P{IsAlphabetic}+");
+                List<String> sort = Arrays.stream(words)
                         .map(String::toLowerCase)
                         .sorted()
                         .collect(Collectors.toList());
@@ -48,18 +50,20 @@ public class BooleanSearchEngine implements SearchEngine {
     @Override
     public List<PageEntry> search(String word) {
         // тут реализуйте поиск по слову
-        List<PageEntry> i = pageEntryMap.get(word.toLowerCase());
-        if (i == null) {
+        List<PageEntry> searchWord = pageEntryMap.get(word.toLowerCase());
+        Collections.sort(searchWord);
+        if (searchWord == null) {
             System.out.println("такого слова нет");
         }
-        return i;
+        return searchWord;
     }
 
-    public Map<String, List<PageEntry>> pageMapPut(int i, int count, String key) {
-        PageEntry pageEntry = new PageEntry(pdfName, i, count);
+    public Map<String, List<PageEntry>> pageMapPut(int page, int count, String key) {
+        PageEntry pageEntry = new PageEntry(pdfName, page, count);
         List<PageEntry> pageEntryList;
         if (pageEntryMap.containsKey(key)) {
             pageEntryList = pageEntryMap.get(key);
+
         } else {
             pageEntryList = new ArrayList<>();
         }
@@ -67,5 +71,6 @@ public class BooleanSearchEngine implements SearchEngine {
         pageEntryMap.put(key, pageEntryList);
         return pageEntryMap;
     }
+
 }
 

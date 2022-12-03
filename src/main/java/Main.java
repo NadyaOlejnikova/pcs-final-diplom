@@ -2,6 +2,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+
 public class Main {
     public static void main(String[] args) throws Exception {
         BooleanSearchEngine engine = new BooleanSearchEngine(new File("pdfs"));
@@ -13,6 +14,7 @@ public class Main {
                      BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));) {
                     String word = bufferedReader.readLine();
                     printWriter.println(engine.search(word));
+
                 }
             }
         } catch (IOException e) {
